@@ -8,9 +8,16 @@
 #include <fcntl.h>
 
 #include <stdio.h>
+#include <math.h>
 
 struct fb_var_screeninfo screen_info;
 struct fb_fix_screeninfo fixed_info;
+struct Point
+{
+  int x;
+  int y;
+};
+
 char *buffer = NULL;
 long pixels[10000];
 int pixel_count = 0;
@@ -78,6 +85,21 @@ void print_pixel(long x, long y) {
     pixel_count++;
 }
 
+void print_line(struct Point p1,struct Point p2) {
+  int dx = fabs(p2.x-p1.x);
+  int dy = fabs(p2.y-p1.y);
+  int control = 2*dy - dx;
+  int y = p1.y;
+  for(int i = p1.x; i < p2.x; i++){
+    print_pixel(i,y);
+    if(control >= 0) {
+      y++;
+      control -= 2*dx;
+    }
+    control += 2*dy;
+  }
+}
+
 int main()
 {
    size_t buflen;
@@ -127,6 +149,15 @@ int main()
         }
 
         fclose(file);
+
+        //example for print line
+        struct Point p1;
+        struct Point p2;
+        p1.x = 82;
+        p1.y = 216;
+        p2.x = 176;
+        p2.y = 128;
+        print_line(p1,p2);
 
         for (int i = 0; i < 10000; i++) {
             move_pixels();
