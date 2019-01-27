@@ -86,18 +86,60 @@ void print_pixel(long x, long y) {
 }
 
 void print_line(struct Point p1,struct Point p2) {
-  int dx = fabs(p2.x-p1.x);
-  int dy = fabs(p2.y-p1.y);
-  int control = 2*dy - dx;
+  int dx = p2.x-p1.x;
+  int dy = p2.y-p1.y;
+  int control;
   int y = p1.y;
-  for(int i = p1.x; i < p2.x; i++){
-    print_pixel(i,y);
-    if(control >= 0) {
-      y++;
-      control -= 2*dx;
+  int x = p1.x;
+  if(dx>fabs(dy)){
+    control = 2*dy - dx;
+    if(dy<0){
+      for(int i = p1.x; i < p2.x; i++){
+        print_pixel(i,y);
+        if(control > 0) {
+          y--;
+          control -= 2*dx;
+        }
+        control -= 2*dy;  
+      }  
+    }else {
+      for(int i = p1.x; i < p2.x; i++){
+        print_pixel(i,y);
+        if(control > 0) {
+          y++;
+          control -= 2*dx;
+        }
+        control += 2*dy;
+      }
     }
-    control += 2*dy;
+  } else {
+    control = 2*dx - dy;
+    if(dy<0){
+      for(int i = p1.y; i < p2.y; i--){
+        print_pixel(x,i);
+        if(control > 0) {
+          x++;
+          control -= 2*dy;
+        }
+        control -= 2*dx;  
+      }  
+    }else {
+      for(int i = p1.y; i < p2.y; i++){
+        print_pixel(x,i);
+        if(control > 0) {
+          x++;
+          control -= 2*dy;
+        }
+        control += 2*dx;
+      }  
+    }
   }
+  
+  
+}
+
+void write_point(struct Point p) {
+  printf("point at :%d,%d\n", p.x, p.y);
 }
 
 int main()
@@ -125,41 +167,72 @@ int main()
 			 *           + y * fixed_info.line_length
 			 */
 		r = 0;
-		for (long i = 0; i < 1000000; i++) {
+		for (long i = 0; i < 214748; i++) {
 			write_black_pixel(buffer,i);	
 		}
-        FILE* file = fopen("result.txt", "r");
+        FILE* file = fopen("gunung.txt", "r");
         char line[25];
+
+        // while (fgets(line, sizeof(line), file)) {
+        //     int i = 0;
+        //     int j = 0;
+        //     long temp[2];
+        //     temp[0] = 0;
+        //     temp[1] = 0;
+        //     while (line[i] != '\n') {
+        //         if (line[i] == ' ') {
+        //             j++;
+        //         } else {
+        //             temp[j] = temp[j] * 10 + (line[i] - '0');
+        //         }
+        //         i++;
+        //     }
+        //     print_pixel(temp[0], temp[1]);
+        // }
 
         while (fgets(line, sizeof(line), file)) {
             int i = 0;
             int j = 0;
+            int k = 0;
             long temp[2];
+            struct Point points[2];
+            points[0].x = 0;
+            points[0].y = 0;
+            points[1].x = 0;
+            points[1].y = 0;
             temp[0] = 0;
             temp[1] = 0;
             while (line[i] != '\n') {
                 if (line[i] == ' ') {
-                    j++;
+                  points[k].x = temp[0];
+                  points[k].y = temp[1];
+                  temp[0] = 0;
+                  temp[1] = 0;
+                  k++;
+                  j = 0;
+                } else if(line[i] == ',') {
+                  j++;
                 } else {
-                    temp[j] = temp[j] * 10 + (line[i] - '0');
+                  temp[j] = temp[j] * 10 + (line[i] - '0');
                 }
                 i++;
             }
-            print_pixel(temp[0], temp[1]);
+            points[k].x = temp[0];
+            points[k].y = temp[1];
+            // printf("1:");
+            // write_point(points[0]);
+            // printf("2:");
+            // write_point(points[1]);
+            if(points[0].x <= points[1].x){
+              print_line(points[0], points[1]);
+            } else {
+              print_line(points[1], points[0]);
+            }
         }
 
         fclose(file);
 
-        //example for print line
-        struct Point p1;
-        struct Point p2;
-        p1.x = 82;
-        p1.y = 216;
-        p2.x = 176;
-        p2.y = 128;
-        print_line(p1,p2);
-
-        for (int i = 0; i < 10000; i++) {
+        for (long i = 0; i < 19000; i++) {
             move_pixels();
         }
 	 }
