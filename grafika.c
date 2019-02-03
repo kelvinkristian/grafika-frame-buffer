@@ -157,6 +157,7 @@ void draw_all_quadrant(struct Point center, int x, int y)
     print_pixel(center.x - y, center.y - x);
 }
 
+// pake ini buat gambar lingkaran
 void draw_circle(struct Point center, int r)
 {
     int x = 0;
@@ -177,6 +178,27 @@ void draw_circle(struct Point center, int r)
         }
         draw_all_quadrant(center, x, y);
     }
+}
+
+// pake ini buat gambar polygon
+void draw_polygon(struct Point points[], int total_point) {
+    int i;
+    for (i = 0; i < total_point-1 ; i++) {
+        print_line(points[i], points[i+1]);
+    }
+}
+
+// pake ini buat gambar persegi
+void draw_rect(struct Point p1, struct Point p2) {
+    struct Point p3, p4;
+    p3.x = p1.x;
+    p3.y = p2.y;
+    p4.x = p2.x;
+    p4.y = p1.y;
+    print_line(p2, p3);
+    print_line(p3, p1);
+    print_line(p1, p4);
+    print_line(p4, p2);
 }
 
 int main()
@@ -214,6 +236,10 @@ int main()
                 p.y = 200;
                 int r = 50;
                 draw_circle(p, r);
+                struct Point p2;
+                p2.x = 400;
+                p2.y = 400;
+                draw_rect(p, p2);
                 // FILE *file = fopen("gunung.txt", "r");
                 // char line[25];
 
