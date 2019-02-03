@@ -223,6 +223,98 @@ void read_file_crc(char* filename) {
 	fclose(file);
 }
 
+void read_file_pol_three(char* filename) {
+    FILE *file = fopen(filename, "r");
+    
+    struct Point p[4];
+    
+    //Initialize
+    for (int i = 0; i<3; i = i+1) {
+        p[i].x = -1;
+        p[i].y = -1;
+    }
+    
+    while(fscanf(file, "%d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y) != EOF){
+        
+        draw_polygon(p, 3);
+        
+        for (int i = 0; i<3; i = i+1) {
+            p[i].x = -1;
+            p[i].y = -1;
+        }
+    }
+    fclose(file);
+}
+
+void read_file_pol_four(char* filename) {
+    FILE *file = fopen(filename, "r");
+    
+    struct Point p[5];
+    
+    //Initialize
+    for (int i = 0; i<4; i = i+1) {
+        p[i].x = -1;
+        p[i].y = -1;
+    }
+    
+    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y) != EOF){
+        
+        draw_polygon(p, 4);
+        
+        for (int i = 0; i<4; i = i+1) {
+            p[i].x = -1;
+            p[i].y = -1;
+        }
+    }
+    fclose(file);
+}
+
+void read_file_pol_five(char* filename) {
+    FILE *file = fopen(filename, "r");
+    
+    struct Point p[6];
+    
+    //Initialize
+    for (int i = 0; i<5; i = i+1) {
+        p[i].x = -1;
+        p[i].y = -1;
+    }
+    
+    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y,&p[5].x,&p[5].y) != EOF){
+        
+        draw_polygon(p, 5);
+        
+        for (int i = 0; i<5; i = i+1) {
+            p[i].x = -1;
+            p[i].y = -1;
+        }
+    }
+    fclose(file);
+}
+
+void read_file_pol_six(char* filename) {
+    FILE *file = fopen(filename, "r");
+    
+    struct Point p[7];
+    
+    //Initialize
+    for (int i = 0; i<6; i = i+1) {
+        p[i].x = -1;
+        p[i].y = -1;
+    }
+    
+    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y,&p[5].x,&p[5].y,&p[6].x,&p[6].y) != EOF){
+        
+        draw_polygon(p, 6);
+        
+        for (int i = 0; i<6; i = i+1) {
+            p[i].x = -1;
+            p[i].y = -1;
+        }
+    }
+    fclose(file);
+}
+
 
 int main()
 {
@@ -265,6 +357,10 @@ int main()
                 // draw_rect(p, p2);
                 read_file_sqr("sqr.txt");
                 read_file_crc("crc.txt");
+                read_file_pol_three("pol_three.txt");
+                read_file_pol_four("pol_four.txt");
+                read_file_pol_five("pol_five.txt");
+                read_file_pol_six("pol_six.txt");
                 // FILE *file = fopen("gunung.txt", "r");
                 // char line[25];
 
