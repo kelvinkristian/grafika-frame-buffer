@@ -1,0 +1,7 @@
+kotak 100,250 200,300
+kotak 50,300 250,350
+kotak 200,265 300,285
+lingkaran 75,375 25
+lingkaran 125,375 25
+lingkaran 175,375 25
+lingkaran 225,375 25
