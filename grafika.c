@@ -183,9 +183,10 @@ void draw_circle(struct Point center, int r)
 // pake ini buat gambar polygon
 void draw_polygon(struct Point points[], int total_point) {
     int i;
-    for (i = 0; i < total_point-1 ; i++) {
+    for (i = 0; i < total_point-1; i++) {
         print_line(points[i], points[i+1]);
     }
+    print_line(points[total_point-1],points[0]);
 }
 
 // pake ini buat gambar persegi
@@ -227,21 +228,26 @@ void read_file_pol_three(char* filename) {
     FILE *file = fopen(filename, "r");
     
     struct Point p[4];
-    
+    struct Point p0;
+    struct Point p1;
+    struct Point p2;
     //Initialize
-    for (int i = 0; i<3; i = i+1) {
-        p[i].x = -1;
-        p[i].y = -1;
-    }
+    // for (int i = 0; i<3; i++) {
+    //     p[i].x = -1;
+    //     p[i].y = -1;
+    // }
     
-    while(fscanf(file, "%d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y) != EOF){
-        
-        draw_polygon(p, 3);
-        
-        for (int i = 0; i<3; i = i+1) {
-            p[i].x = -1;
-            p[i].y = -1;
-        }
+    while(fscanf(file, "%d,%d %d,%d %d,%d", &p0.x,&p0.y,&p1.x,&p1.y,&p2.x,&p2.y) != EOF){
+        printf("hehe\n");
+        // p[0] = p0;
+        // p[1] = p1;
+        // p[2] = p2;
+        // draw_polygon(p, 3);
+
+        // for (int i = 0; i<3; i++) {
+        //     p[i].x = -1;
+        //     p[i].y = -1;
+        // }
     }
     fclose(file);
 }
@@ -257,7 +263,7 @@ void read_file_pol_four(char* filename) {
         p[i].y = -1;
     }
     
-    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y) != EOF){
+    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d", &p[0].x,&p[0].y,&p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y) != EOF){
         
         draw_polygon(p, 4);
         
@@ -280,7 +286,7 @@ void read_file_pol_five(char* filename) {
         p[i].y = -1;
     }
     
-    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y,&p[5].x,&p[5].y) != EOF){
+    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d", &p[0].x,&p[0].y,&p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y) != EOF){
         
         draw_polygon(p, 5);
         
@@ -303,7 +309,7 @@ void read_file_pol_six(char* filename) {
         p[i].y = -1;
     }
     
-    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d %d,%d", &p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y,&p[5].x,&p[5].y,&p[6].x,&p[6].y) != EOF){
+    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d %d,%d", &p[0].x,&p[0].y,&p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y,&p[5].x,&p[5].y) != EOF){
         
         draw_polygon(p, 6);
         
@@ -357,7 +363,7 @@ int main()
                 // draw_rect(p, p2);
                 read_file_sqr("sqr.txt");
                 read_file_crc("crc.txt");
-                read_file_pol_three("pol_three.txt");
+                // read_file_pol_three("pol_three.txt");
                 read_file_pol_four("pol_four.txt");
                 read_file_pol_five("pol_five.txt");
                 read_file_pol_six("pol_six.txt");
