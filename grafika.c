@@ -6,7 +6,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
-
+#include <string.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -98,8 +98,8 @@ void print_pixel(long x, long y)
 
 void print_line(struct Point p1, struct Point p2)
 {
-    int dx = abs(p2.x - p1.x);
-    int dy = abs(p2.y - p1.y);
+    int dx = fabs(p2.x - p1.x);
+    int dy = fabs(p2.y - p1.y);
     int signx = p2.x > p1.x ? 1 : -1;
     int signy = p2.y > p1.y ? 1 : -1;
     int x = p1.x;
@@ -201,6 +201,29 @@ void draw_rect(struct Point p1, struct Point p2) {
     print_line(p4, p2);
 }
 
+void read_file_sqr(char* filename) {
+	FILE *file = fopen(filename, "r");
+	struct Point p1;
+    struct Point p2;
+
+	while(fscanf(file, "%d,%d %d,%d", &p1.x,&p1.y,&p2.x,&p2.y) != EOF){
+        draw_rect(p1, p2);
+	}
+	fclose(file);
+}
+
+void read_file_crc(char* filename) {
+	FILE *file = fopen(filename, "r");
+	struct Point p;
+	int radius;
+
+	while(fscanf(file, "%d,%d %d", &p.x,&p.y,&radius) != EOF){
+        draw_circle(p, radius);
+	}
+	fclose(file);
+}
+
+
 int main()
 {
     size_t buflen;
@@ -226,20 +249,22 @@ int main()
 			 *           + y * fixed_info.line_length
 			 */
                 r = 0;
-                for (long i = 0; i < 214748; i++)
+                for (long i = 0; i < 4147480; i++)
                 {
                     write_black_pixel(buffer, i);
                 }
 
-                struct Point p;
-                p.x = 200;
-                p.y = 200;
-                int r = 50;
-                draw_circle(p, r);
-                struct Point p2;
-                p2.x = 400;
-                p2.y = 400;
-                draw_rect(p, p2);
+                // struct Point p;
+                // p.x = 100;
+                // p.y = 250;
+                // int r = 50;
+                // draw_circle(p, r);
+                // struct Point p2;
+                // p2.x = 200;
+                // p2.y = 300;
+                // draw_rect(p, p2);
+                read_file_sqr("sqr.txt");
+                read_file_crc("crc.txt");
                 // FILE *file = fopen("gunung.txt", "r");
                 // char line[25];
 
