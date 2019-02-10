@@ -345,7 +345,7 @@ void translate_circle(circle crc, int dx, int dy) {
     
     int init_x = crc.p.x;
     int init_y = crc.p.y;
-    float addY = dy / dx;
+    int addY = dy / dx;
     for (int i = 0; i < dx; i++) {
         clear_screen();
         crc.p.x += 1;
@@ -356,6 +356,24 @@ void translate_circle(circle crc, int dx, int dy) {
     crc.p.x = init_x + dx;
     crc.p.y = init_y + dy;
     // draw_circle(crc.p, crc.r);
+}
+
+void dilate_circle(circle crc, float multiplier) {
+    int rad = (int) (crc.r * multiplier);
+    
+    if (crc.r <= rad ) {
+        for (int i = crc.r; i<=rad; i++) {
+            clear_screen();
+            crc.r = i;
+            draw_circle(crc.p,crc.r);
+        }
+    } else {
+        for (int i = crc.r; i=>rad; i--) {
+            clear_screen();
+            crc.r = i;
+            draw_circle(crc.p, crc.r);
+        }
+    }
 }
 
 int main()
