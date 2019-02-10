@@ -1,22 +1,19 @@
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <sys/mman.h>
-
 #include <linux/fb.h>
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
+#include "grafika.h"
 
 struct fb_var_screeninfo screen_info;
 struct fb_fix_screeninfo fixed_info;
-struct Point
-{
-    int x;
-    int y;
-};
+
+
 
 char *buffer = NULL;
 long pixels[10000];
@@ -96,7 +93,7 @@ void print_pixel(long x, long y)
     pixel_count++;
 }
 
-void print_line(struct Point p1, struct Point p2)
+void print_line( Point p1,  Point p2)
 {
     int dx = fabs(p2.x - p1.x);
     int dy = fabs(p2.y - p1.y);
@@ -140,12 +137,12 @@ void print_line(struct Point p1, struct Point p2)
     }
 }
 
-void write_point(struct Point p)
+void write_point( Point p)
 {
     printf("point at :%d,%d\n", p.x, p.y);
 }
 
-void draw_all_quadrant(struct Point center, int x, int y) 
+void draw_all_quadrant( Point center, int x, int y) 
 {
     print_pixel(center.x + x, center.y + y);
     print_pixel(center.x + x, center.y - y);
@@ -158,7 +155,7 @@ void draw_all_quadrant(struct Point center, int x, int y)
 }
 
 // pake ini buat gambar lingkaran
-void draw_circle(struct Point center, int r)
+void draw_circle( Point center, int r)
 {
     int x = 0;
     int y = r;
@@ -181,7 +178,7 @@ void draw_circle(struct Point center, int r)
 }
 
 // pake ini buat gambar polygon
-void draw_polygon(struct Point points[], int total_point) {
+void draw_polygon( Point points[], int total_point) {
     int i;
     for (i = 0; i < total_point-1; i++) {
         print_line(points[i], points[i+1]);
@@ -190,8 +187,8 @@ void draw_polygon(struct Point points[], int total_point) {
 }
 
 // pake ini buat gambar persegi
-void draw_rect(struct Point p1, struct Point p2) {
-    struct Point p3, p4;
+void draw_rect( Point p1,  Point p2) {
+     Point p3, p4;
     p3.x = p1.x;
     p3.y = p2.y;
     p4.x = p2.x;
@@ -202,20 +199,21 @@ void draw_rect(struct Point p1, struct Point p2) {
     print_line(p4, p2);
 }
 
-void read_file_sqr(char* filename) {
+rect* read_file_sqr(char* filename) {
 	FILE *file = fopen(filename, "r");
-	struct Point p1;
-    struct Point p2;
+    rect* Re = malloc(sizeof(rect)*20);
+    int i = 0;
 
-	while(fscanf(file, "%d,%d %d,%d", &p1.x,&p1.y,&p2.x,&p2.y) != EOF){
-        draw_rect(p1, p2);
+	while(fscanf(file, "%d,%d %d,%d", &Re[i].p1.x,&Re[i].p1.y,&Re[i].p2.x,&Re[i].p2.y) != EOF){
+        i++;
 	}
 	fclose(file);
+    return Re;
 }
 
 void read_file_crc(char* filename) {
 	FILE *file = fopen(filename, "r");
-	struct Point p;
+	 Point p;
 	int radius;
 
 	while(fscanf(file, "%d,%d %d", &p.x,&p.y,&radius) != EOF){
@@ -227,10 +225,10 @@ void read_file_crc(char* filename) {
 void read_file_pol_three(char* filename) {
     FILE *file = fopen(filename, "r");
     
-    struct Point p[4];
-    struct Point p0;
-    struct Point p1;
-    struct Point p2;
+     Point p[4];
+     Point p0;
+     Point p1;
+     Point p2;
     //Initialize
     // for (int i = 0; i<3; i++) {
     //     p[i].x = -1;
@@ -255,7 +253,7 @@ void read_file_pol_three(char* filename) {
 void read_file_pol_four(char* filename) {
     FILE *file = fopen(filename, "r");
     
-    struct Point p[5];
+     Point p[5];
     
     //Initialize
     for (int i = 0; i<4; i = i+1) {
@@ -278,7 +276,7 @@ void read_file_pol_four(char* filename) {
 void read_file_pol_five(char* filename) {
     FILE *file = fopen(filename, "r");
     
-    struct Point p[6];
+     Point p[6];
     
     //Initialize
     for (int i = 0; i<5; i = i+1) {
@@ -301,7 +299,7 @@ void read_file_pol_five(char* filename) {
 void read_file_pol_six(char* filename) {
     FILE *file = fopen(filename, "r");
     
-    struct Point p[7];
+     Point p[7];
     
     //Initialize
     for (int i = 0; i<6; i = i+1) {
@@ -321,9 +319,20 @@ void read_file_pol_six(char* filename) {
     fclose(file);
 }
 
+void clear_screen(char *buffer){
+    for (long i = 0; i < 4147480; i++)
+    {
+        write_black_pixel(buffer, i);
+    }
+}
+
+void translate(rect int dx, int dy){
+    
+}
 
 int main()
 {
+    char a;
     size_t buflen;
     int fd = -1;
     int r = 1;
@@ -347,26 +356,38 @@ int main()
 			 *           + y * fixed_info.line_length
 			 */
                 r = 0;
-                for (long i = 0; i < 4147480; i++)
-                {
-                    write_black_pixel(buffer, i);
-                }
+                // for (long i = 0; i < 4147480; i++)
+                // {
+                //     write_black_pixel(buffer, i);
+                // }
+                clear_screen(buffer);
 
-                // struct Point p;
+
+                //  Point p;
                 // p.x = 100;
                 // p.y = 250;
                 // int r = 50;
                 // draw_circle(p, r);
-                // struct Point p2;
+                //  Point p2;
                 // p2.x = 200;
                 // p2.y = 300;
                 // draw_rect(p, p2);
-                read_file_sqr("sqr.txt");
-                read_file_crc("crc.txt");
+                rect* arr_rect = malloc(sizeof(rect)*50);
+                arr_rect = read_file_sqr("sqr.txt");
+                draw_rect(arr_rect[0].p1,arr_rect[0].p2);
+                scanf("%c",&a);
+
+                arr_rect[0].p2.x = arr_rect[0].p2.x+300;
+                arr_rect[0].p1.x = arr_rect[0].p1.x+300;
+
+                clear_screen(buffer);
+
+                draw_rect(arr_rect[0].p1,arr_rect[0].p2);
+                // read_file_crc("crc.txt");
                 // read_file_pol_three("pol_three.txt");
-                read_file_pol_four("pol_four.txt");
-                read_file_pol_five("pol_five.txt");
-                read_file_pol_six("pol_six.txt");
+                // read_file_pol_four("pol_four.txt");
+                // read_file_pol_five("pol_five.txt");
+                // read_file_pol_six("pol_six.txt");
                 // FILE *file = fopen("gunung.txt", "r");
                 // char line[25];
 
@@ -376,7 +397,7 @@ int main()
                 //     int j = 0;
                 //     int k = 0;
                 //     long temp[2];
-                //     struct Point points[2];
+                //      Point points[2];
                 //     points[0].x = 0;
                 //     points[0].y = 0;
                 //     points[1].x = 0;
@@ -433,6 +454,8 @@ int main()
         munmap(buffer, buflen);
     if (fd >= 0)
         close(fd);
+    
+    scanf("%c",&a);
 
     return r;
 }
