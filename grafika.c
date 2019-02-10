@@ -320,8 +320,9 @@ void translate_polygon(polygon p, int dx, int dy) {
         //p.points[i].y = temp.points[i].y + dy;
     //}
     //draw_polygon(p);
-}
 
+}
+    
 void rotate(float a[][2], int n, int x_pivot,  
                       int y_pivot, int angle) 
 { 
