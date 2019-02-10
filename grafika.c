@@ -294,10 +294,10 @@ void rotate_rect(rect *r, int angle) {
     Point center;
     center.x = r->p2.x - r->p1.x;
     center.y = r->p2.y - r->p1.y;
-    int x1 = p1.x;
-    int y1 = p1.y;
-    int x2 = p2.x;
-    int y2 = p2.y;
+    int x1 = r->p1.x;
+    int y1 = r->p1.y;
+    int x2 = r->p2.x;
+    int y2 = r->p2.y;
     
     for (int a=0; a<=angle; a+=5) {
         clear_screen();
@@ -305,14 +305,14 @@ void rotate_rect(rect *r, int angle) {
         r->p1.y = (x1-center.x) * SIN(a) + (y1-center.y) * COS(a)+center.y;
         r->p2.x = (x2-center.x) * COS(a) - (y2-center.y) * SIN(a)+center.x;
         r->p2.y = (x2-center.x) * SIN(a) + (y2-center.y) * COS(a)+center.y;
-        draw_rect(r);
+        draw_rect(*r);
     }
     clear_screen();
     r->p1.x = (x1-center.x) * COS(angle) - (y1-center.y) * SIN(angle)+center.x;
     r->p1.y = (x1-center.x) * SIN(angle) + (y1-center.y) * COS(angle)+center.y;
     r->p2.x = (x2-center.x) * COS(angle) - (y2-center.y) * SIN(angle)+center.x;
     r->p2.y = (x2-center.x) * SIN(angle) + (y2-center.y) * COS(angle)+center.y;
-    draw_rect(r);
+    draw_rect(*r);
     
 
 }
@@ -444,20 +444,24 @@ int main()
 
                 polygon* polygon_arr = malloc(sizeof(polygon)*10);
                 polygon_arr = read_file_polygon("polygon.txt");
-                
+                rect* rect_arr = malloc(sizeof(rect)*20);
+		rect_arr = read_file_sqr("sqr.txt");
+
                 for (int x=0; x<2; x++) {
-                  draw_polygon(polygon_arr[x]);
+                //  draw_polygon(polygon_arr[x]);
                 }
-                translate_polygon(polygon_arr[0],10,20);
+                // translate_polygon(polygon_arr[0],10,20);
 
                 Point point;
                 point.x = 400;
                 point.y = 100;
-		for (int i = 0; i < 60; i++) {
-			rotate_polygon(polygon_arr[0], point, 1);
-		}
+		// for (int i = 0; i < 60; i++) {
+		//	rotate_polygon(polygon_arr[0], point, 1);
+		//}
 //		rotate_polygon(polygon_arr[0], point, 60);
-		//draw_polygon(polygon_arr[0]); 
+		//draw_polygon(polygon_arr[0]);
+		//draw_rect(rect_arr[0]);
+		rotate_rect(&rect_arr[0],20); 
  	    }
         }
     }
