@@ -12,9 +12,9 @@
 
 // Using macros to convert degree to radian 
 // and call sin() and cos() as these functions 
-// take input in radians 
-#define SIN(x) sin(x * 3.141592653589/180) 
-#define COS(x) cos(x * 3.141592653589/180)  
+// take input in radians
+#define SIN(x) sin(x * 3.141592653589/180)
+#define COS(x) cos(x * 3.141592653589/180)
 
 struct fb_var_screeninfo screen_info;
 struct fb_fix_screeninfo fixed_info;
@@ -288,8 +288,33 @@ void dilate_r(rect *re, float multiplier){
         re->p2.y += control*4;
         draw_rect(*re);
     }
+}
+
+void rotate_rect(rect *r, int angle) {
+    Point center;
+    center.x = r->p2.x - r->p1.x;
+    center.y = r->p2.y - r->p1.y;
+    int x1 = p1.x;
+    int y1 = p1.y;
+    int x2 = p2.x;
+    int y2 = p2.y;
     
+    for (int a=0; a<=angle; a+=5) {
+        clear_screen();
+        r->p1.x = (x1-center.x) * COS(a) - (y1-center.y) * SIN(a)+center.x;
+        r->p1.y = (x1-center.x) * SIN(a) + (y1-center.y) * COS(a)+center.y;
+        r->p2.x = (x2-center.x) * COS(a) - (y2-center.y) * SIN(a)+center.x;
+        r->p2.y = (x2-center.x) * SIN(a) + (y2-center.y) * COS(a)+center.y;
+        draw_rect(r);
+    }
+    clear_screen();
+    r->p1.x = (x1-center.x) * COS(angle) - (y1-center.y) * SIN(angle)+center.x;
+    r->p1.y = (x1-center.x) * SIN(angle) + (y1-center.y) * COS(angle)+center.y;
+    r->p2.x = (x2-center.x) * COS(angle) - (y2-center.y) * SIN(angle)+center.x;
+    r->p2.y = (x2-center.x) * SIN(angle) + (y2-center.y) * COS(angle)+center.y;
+    draw_rect(r);
     
+
 }
 
 void translate_circle(circle *crc, int dx, int dy) {
