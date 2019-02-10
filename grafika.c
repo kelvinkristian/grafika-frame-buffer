@@ -254,74 +254,101 @@ void clear_screen(){
     pixel_count = 0;
 }
 
-void translate_r(rect re, int dx, int dy){
+void translate_r(rect *re, int dx, int dy){
+    
+    Point init_p1 = re->p1;
+    Point init_p2 = re->p2;
+    float addY = (float)dy / (float)dx;
 
-    int c = dx / dy;
-
-    for(int i = 1; i <= dx; i++)
+    for(int i = 0; i < dx/4; i++)
     {
-        // clear_screen();
-        re.p1.x += 1;
-        re.p2.x += 1;
-        draw_rect(re);
+        clear_screen();
+        re->p1.x += 4;
+        re->p1.y += addY*4;
+        re->p2.x += 4;
+        re->p2.y += addY*4;
+        draw_rect(*re);
     }
+    re->p1.x = init_p1.x+dx;
+    re->p2.x = init_p2.x+dx;
+    re->p1.y = init_p1.y+dy;
+    re->p2.y = init_p2.y+dy;
+    draw_rect(*re);
 
 }
 
-void translate_circle(circle crc, int dx, int dy) {
+void dilate_r(rect *re, float multiplier){
+    int p = re->p2.x - re->p1.x;
+    int l = re->p2.y - re->p1.y;
+    float control = (float)l/(float)p;
 
-    int init_x = crc.p.x;
-    int init_y = crc.p.y;
-    int addY = dy / dx;
-    for (int i = 0; i < dx; i++) {
+    for(int i = 0;i < p/4;p++){
         clear_screen();
-        crc.p.x += 1;
-        crc.p.y += addY;
-        draw_circle(crc.p, crc.r);
+        re->p2.x += 4;
+        re->p2.y += control*4;
+        draw_rect(*re);
+    }
+    
+    
+}
+
+void translate_circle(circle *crc, int dx, int dy) {
+    
+    int init_x = crc->p.x;
+    int init_y = crc->p.y;
+    float addY = (float)dy / (float)dx;
+    for (int i = 0; i < dx/4; i++) {
+        clear_screen();
+        crc->p.x += 4;
+        crc->p.y += addY*4;
+        draw_circle(crc->p, crc->r);
     }
     clear_screen();
-    crc.p.x = init_x + dx;
-    crc.p.y = init_y + dy;
-    draw_circle(crc.p, crc.r);
+    crc->p.x = init_x + dx;
+    crc->p.y = init_y + dy;
+    draw_circle(crc->p, crc->r);
 }
 
-void dilate_circle(circle crc, float multiplier) {
-    int rad = (int) (crc.r * multiplier);
-
-    if (crc.r <= rad ) {
-        for (int i = crc.r; i<=rad; i++) {
+void dilate_circle(circle *crc, float multiplier) {
+    int rad = (int) (crc->r * multiplier);
+    
+    if (crc->r <= rad ) {
+        for (int i = crc->r; i<=rad; i++) {
             clear_screen();
-            crc.r = i;
-            draw_circle(crc.p,crc.r);
+            crc->r = i;
+            draw_circle(crc->p,crc->r);
         }
     } else {
-        for (int i = crc.r; i >= rad; i--) {
+        for (int i = crc->r; i >= rad; i--) {
             clear_screen();
-            crc.r = i;
-            draw_circle(crc.p, crc.r);
+            crc->r = i;
+            draw_circle(crc->p, crc->r);
         }
     }
 }
 
 void translate_polygon(polygon p, int dx, int dy) {
-    polygon temp = p;
+    Point* temp = malloc(sizeof(Point)*6);
+    for (int i = 0; i < 4; i++) {
+        temp[i] = p.points[i];
+    }
     int addY = dy/dx;
     for (int i = 0; i < dx; i++) {
         clear_screen();
         for (int j=0; j <=p.N; j++) {
-            p.points[i].x++;
-            p.points[i].y += addY;
+            p.points[j].x++;
+            p.points[j].y += addY;
         }
         draw_polygon(p);
     }
     clear_screen();
-    //for (int j=0; j <=p.N; j++) {
-      //  p.points[i].x = temp.points[i].x + dx;
-        //p.points[i].y = temp.points[i].y + dy;
-    //}
-    //draw_polygon(p);
-
+    for (int j=0; j <=p.N; j++) {
+        p.points[j].x = temp[j].x + dx;
+        p.points[j].y = temp[j].y + dy;
+    }
+    draw_polygon(p);
 }
+    
     
 void rotate(float a[][2], int n, int x_pivot,  
                       int y_pivot, int angle) 
@@ -392,6 +419,11 @@ int main()
 
                 polygon* polygon_arr = malloc(sizeof(polygon)*10);
                 polygon_arr = read_file_polygon("polygon.txt");
+                
+                for (int x=0; x<2; x++) {
+                  draw_polygon(polygon_arr[x]);
+                }
+                translate_polygon(polygon_arr[0],10,20);
 
                 Point point;
                 point.x = 400;
