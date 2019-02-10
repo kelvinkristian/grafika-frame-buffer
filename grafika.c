@@ -297,6 +297,25 @@ void dilate_circle(circle crc, float multiplier) {
     }
 }
 
+void translate_polygon(polygon p, int dx, int dy) {
+    polygon temp = p;
+    int addY = dy/dx;
+    for (int i = 0; i < dx; i++) {
+        clear_screen();
+        for (int j=0; j <=p.N; j++) {
+            p.points[i].x++;
+            p.points[i].y += addY;
+        }
+        draw_polygon(p);
+    }
+    clear_screen();
+    for (int j=0; j <=p.N; j++) {
+        p.points[i].x = temp.points[i].x + dx;
+        p.points[i].y = temp.points[i].y + dy;
+    }
+    draw_polygon(p);
+}
+
 int main()
 {
     char a;
@@ -327,6 +346,7 @@ int main()
                 for (int x=0; x<2; x++) {
                   draw_polygon(polygon_arr[x]);
                 }
+                translate_polygon(polygon_arr[0],200,100);
             }
         }
     }
