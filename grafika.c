@@ -315,12 +315,13 @@ void translate_polygon(polygon p, int dx, int dy) {
         draw_polygon(p);
     }
     clear_screen();
-    for (int j=0; j <=p.N; j++) {
-        p.points[i].x = temp.points[i].x + dx;
-        p.points[i].y = temp.points[i].y + dy;
-    }
-    draw_polygon(p);
-    
+    //for (int j=0; j <=p.N; j++) {
+      //  p.points[i].x = temp.points[i].x + dx;
+        //p.points[i].y = temp.points[i].y + dy;
+    //}
+    //draw_polygon(p);
+}
+
 void rotate(float a[][2], int n, int x_pivot,  
                       int y_pivot, int angle) 
 { 
@@ -350,9 +351,11 @@ void rotate_polygon(struct Polygon polygon, Point pivot, int angle) {
         int y_shifted = polygon.points[i].y - pivot.y;
         polygon.points[i].x = pivot.x + (x_shifted*COS(angle) - y_shifted*SIN(angle)); 
         polygon.points[i].y = pivot.y + (x_shifted*SIN(angle) + y_shifted*COS(angle)); 
-        draw_polygon(polygon);
-        i++;
+//	clear_screen();
+//	draw_polygon(polygon);	
+	i++;
     }
+    draw_polygon(polygon);
 }
 
 int main()
@@ -382,18 +385,12 @@ int main()
                 polygon* polygon_arr = malloc(sizeof(polygon)*10);
                 polygon_arr = read_file_polygon("polygon.txt");
 
-<<<<<<< HEAD
-                for (int x=0; x<2; x++) {
-                  draw_polygon(polygon_arr[x]);
-                }
-                translate_polygon(polygon_arr[0],200,100);
-=======
                 Point point;
-                point.x = 200;
-                point.y = 200;
-                rotate_polygon(polygon_arr[0], point, 90);
->>>>>>> ab3e30824be7ec9aaa470a5f474f564c19c1caa9
-            }
+                point.x = 300;
+                point.y = 400;
+                rotate_polygon(polygon_arr[0], point, 60);
+		//draw_polygon(polygon_arr[0]); 
+ 	    }
         }
     }
     if (buffer && buffer != MAP_FAILED)
