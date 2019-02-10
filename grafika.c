@@ -142,7 +142,7 @@ void write_point( Point p)
     printf("point at :%d,%d\n", p.x, p.y);
 }
 
-void draw_all_quadrant( Point center, int x, int y) 
+void draw_all_quadrant( Point center, int x, int y)
 {
     print_pixel(center.x + x, center.y + y);
     print_pixel(center.x + x, center.y - y);
@@ -178,12 +178,12 @@ void draw_circle( Point center, int r)
 }
 
 // pake ini buat gambar polygon
-void draw_polygon( Point points[], int total_point) {
+void draw_polygon(polygon poly) {
     int i;
-    for (i = 0; i < total_point-1; i++) {
-        print_line(points[i], points[i+1]);
+    for (i = 0; i < poly.N-1; i++) {
+        print_line(poly.points[i], poly.points[i+1]);
     }
-    print_line(points[total_point-1],points[0]);
+    print_line(poly.points[poly.N-1],poly.points[0]);
 }
 
 // pake ini buat gambar persegi
@@ -211,6 +211,23 @@ rect* read_file_sqr(char* filename) {
     return Re;
 }
 
+polygon* read_file_polygon(char* filename) {
+  FILE *file = fopen(filename, "r");
+  polygon* Pol = malloc(sizeof(polygon)*20);
+  int i=0;
+  int ip;
+
+  while(fscanf(file, "%d", &Pol[i].N) != EOF){
+    Pol[i].points = malloc(sizeof(Point)*Pol[i].N);
+    for (ip=0; ip<Pol[i].N; ip++) {
+      fscanf(file, "%d,%d", &Pol[i].points[ip].x, &Pol[i].points[ip].y);
+    }
+    i++;
+  }
+  fclose(file);
+  return Pol;
+}
+
 void read_file_crc(char* filename) {
 	FILE *file = fopen(filename, "r");
 	 Point p;
@@ -222,103 +239,6 @@ void read_file_crc(char* filename) {
 	fclose(file);
 }
 
-void read_file_pol_three(char* filename) {
-    FILE *file = fopen(filename, "r");
-    
-     Point p[4];
-     Point p0;
-     Point p1;
-     Point p2;
-    //Initialize
-    // for (int i = 0; i<3; i++) {
-    //     p[i].x = -1;
-    //     p[i].y = -1;
-    // }
-    
-    while(fscanf(file, "%d,%d %d,%d %d,%d", &p0.x,&p0.y,&p1.x,&p1.y,&p2.x,&p2.y) != EOF){
-        printf("hehe\n");
-        // p[0] = p0;
-        // p[1] = p1;
-        // p[2] = p2;
-        // draw_polygon(p, 3);
-
-        // for (int i = 0; i<3; i++) {
-        //     p[i].x = -1;
-        //     p[i].y = -1;
-        // }
-    }
-    fclose(file);
-}
-
-void read_file_pol_four(char* filename) {
-    FILE *file = fopen(filename, "r");
-    
-     Point p[5];
-    
-    //Initialize
-    for (int i = 0; i<4; i = i+1) {
-        p[i].x = -1;
-        p[i].y = -1;
-    }
-    
-    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d", &p[0].x,&p[0].y,&p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y) != EOF){
-        
-        draw_polygon(p, 4);
-        
-        for (int i = 0; i<4; i = i+1) {
-            p[i].x = -1;
-            p[i].y = -1;
-        }
-    }
-    fclose(file);
-}
-
-void read_file_pol_five(char* filename) {
-    FILE *file = fopen(filename, "r");
-    
-     Point p[6];
-    
-    //Initialize
-    for (int i = 0; i<5; i = i+1) {
-        p[i].x = -1;
-        p[i].y = -1;
-    }
-    
-    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d", &p[0].x,&p[0].y,&p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y) != EOF){
-        
-        draw_polygon(p, 5);
-        
-        for (int i = 0; i<5; i = i+1) {
-            p[i].x = -1;
-            p[i].y = -1;
-        }
-    }
-    fclose(file);
-}
-
-void read_file_pol_six(char* filename) {
-    FILE *file = fopen(filename, "r");
-    
-     Point p[7];
-    
-    //Initialize
-    for (int i = 0; i<6; i = i+1) {
-        p[i].x = -1;
-        p[i].y = -1;
-    }
-    
-    while(fscanf(file, "%d,%d %d,%d %d,%d %d,%d %d,%d %d,%d", &p[0].x,&p[0].y,&p[1].x,&p[1].y,&p[2].x,&p[2].y,&p[3].x,&p[3].y,&p[4].x,&p[4].y,&p[5].x,&p[5].y) != EOF){
-        
-        draw_polygon(p, 6);
-        
-        for (int i = 0; i<6; i = i+1) {
-            p[i].x = -1;
-            p[i].y = -1;
-        }
-    }
-    fclose(file);
-}
-
 void clear_screen(char *buffer){
     for (long i = 0; i < 4147480; i++)
     {
@@ -326,8 +246,8 @@ void clear_screen(char *buffer){
     }
 }
 
-void translate(rect int dx, int dy){
-    
+void translate(int dx, int dy){
+
 }
 
 int main()
@@ -372,81 +292,22 @@ int main()
                 // p2.x = 200;
                 // p2.y = 300;
                 // draw_rect(p, p2);
-                rect* arr_rect = malloc(sizeof(rect)*50);
-                arr_rect = read_file_sqr("sqr.txt");
-                draw_rect(arr_rect[0].p1,arr_rect[0].p2);
+                // rect* arr_rect = malloc(sizeof(rect)*50);
+                // arr_rect = read_file_sqr("sqr.txt");
+                // draw_rect(arr_rect[0].p1,arr_rect[0].p2);
+
+                polygon* arr_polygon = malloc(sizeof(polygon)*20);
+                arr_polygon = read_file_polygon("polygon.txt");
+                draw_polygon(arr_polygon[0]);
+
                 scanf("%c",&a);
 
-                arr_rect[0].p2.x = arr_rect[0].p2.x+300;
-                arr_rect[0].p1.x = arr_rect[0].p1.x+300;
+                // arr_rect[0].p2.x = arr_rect[0].p2.x+300;
+                // arr_rect[0].p1.x = arr_rect[0].p1.x+300;
 
-                clear_screen(buffer);
+                // clear_screen(buffer);
 
-                draw_rect(arr_rect[0].p1,arr_rect[0].p2);
-                // read_file_crc("crc.txt");
-                // read_file_pol_three("pol_three.txt");
-                // read_file_pol_four("pol_four.txt");
-                // read_file_pol_five("pol_five.txt");
-                // read_file_pol_six("pol_six.txt");
-                // FILE *file = fopen("gunung.txt", "r");
-                // char line[25];
-
-                // while (fgets(line, sizeof(line), file))
-                // {
-                //     int i = 0;
-                //     int j = 0;
-                //     int k = 0;
-                //     long temp[2];
-                //      Point points[2];
-                //     points[0].x = 0;
-                //     points[0].y = 0;
-                //     points[1].x = 0;
-                //     points[1].y = 0;
-                //     temp[0] = 0;
-                //     temp[1] = 0;
-                //     while (line[i] != '\n')
-                //     {
-                //         if (line[i] == ' ')
-                //         {
-                //             points[k].x = temp[0];
-                //             points[k].y = temp[1];
-                //             temp[0] = 0;
-                //             temp[1] = 0;
-                //             k++;
-                //             j = 0;
-                //         }
-                //         else if (line[i] == ',')
-                //         {
-                //             j++;
-                //         }
-                //         else
-                //         {
-                //             temp[j] = temp[j] * 10 + (line[i] - '0');
-                //         }
-                //         i++;
-                //     }
-                //     points[k].x = temp[0];
-                //     points[k].y = temp[1];
-                //     // printf("1:");
-                //     // write_point(points[0]);
-                //     // printf("2:");
-                //     // write_point(points[1]);
-                //     if (points[0].x <= points[1].x)
-                //     {
-                //         print_line(points[0], points[1]);
-                //     }
-                //     else
-                //     {
-                //         print_line(points[1], points[0]);
-                //     }
-                // }
-
-                // fclose(file);
-
-                // for (long i = 0; i < 19000; i++)
-                // {
-                //     move_pixels();
-                // }
+                // draw_rect(arr_rect[0].p1,arr_rect[0].p2);
             }
         }
     }
@@ -454,7 +315,7 @@ int main()
         munmap(buffer, buflen);
     if (fd >= 0)
         close(fd);
-    
+
     scanf("%c",&a);
 
     return r;

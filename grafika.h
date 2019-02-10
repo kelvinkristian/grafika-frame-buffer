@@ -17,6 +17,12 @@ typedef struct Rectangle
     Point p2;
 }rect;
 
+typedef struct Polygon
+{
+  int N;
+  Point * points;
+}polygon;
+
 typedef struct Circle
 {
     Point c;
