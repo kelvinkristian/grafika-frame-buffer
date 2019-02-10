@@ -316,10 +316,11 @@ void translate_polygon(polygon p, int dx, int dy) {
     }
     clear_screen();
     for (int j=0; j <=p.N; j++) {
-        p.points[i].x = temp.points[i].x + dx;
-        p.points[i].y = temp.points[i].y + dy;
+        p.points[j].x = temp.points[j].x + dx;
+        p.points[j].y = temp.points[j].y + dy;
     }
     draw_polygon(p);
+}
     
 void rotate(float a[][2], int n, int x_pivot,  
                       int y_pivot, int angle) 
