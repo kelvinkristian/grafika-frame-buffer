@@ -187,16 +187,16 @@ void draw_polygon( Point points[], int total_point) {
 }
 
 // pake ini buat gambar persegi
-void draw_rect( Point p1,  Point p2) {
-     Point p3, p4;
-    p3.x = p1.x;
-    p3.y = p2.y;
-    p4.x = p2.x;
-    p4.y = p1.y;
-    print_line(p2, p3);
-    print_line(p3, p1);
-    print_line(p1, p4);
-    print_line(p4, p2);
+void draw_rect(rect r) {
+    Point p3, p4;
+    p3.x = r.p1.x;
+    p3.y = r.p2.y;
+    p4.x = r.p2.x;
+    p4.y = r.p1.y;
+    print_line(r.p2, p3);
+    print_line(p3, r.p1);
+    print_line(r.p1, p4);
+    print_line(p4, r.p2);
 }
 
 rect* read_file_sqr(char* filename) {
@@ -319,15 +319,25 @@ void read_file_pol_six(char* filename) {
     fclose(file);
 }
 
-void clear_screen(char *buffer){
-    for (long i = 0; i < 4147480; i++)
+void clear_screen(){
+    for (long i = 0; i < 4000480; i++)
     {
         write_black_pixel(buffer, i);
     }
 }
 
-void translate(rect int dx, int dy){
+void translate_r(rect re, int dx, int dy){
     
+    int c = dx / dy;
+
+    for(int i = 1; i <= dx; i++)
+    {
+        // clear_screen();
+        re.p1.x += 1;
+        re.p2.x += 1;
+        draw_rect(re);
+    }
+
 }
 
 int main()
@@ -374,15 +384,14 @@ int main()
                 // draw_rect(p, p2);
                 rect* arr_rect = malloc(sizeof(rect)*50);
                 arr_rect = read_file_sqr("sqr.txt");
-                draw_rect(arr_rect[0].p1,arr_rect[0].p2);
+                draw_rect(arr_rect[0]);
                 scanf("%c",&a);
 
-                arr_rect[0].p2.x = arr_rect[0].p2.x+300;
-                arr_rect[0].p1.x = arr_rect[0].p1.x+300;
+                // arr_rect[0].p2.x = arr_rect[0].p2.x+300;
+                // arr_rect[0].p1.x = arr_rect[0].p1.x+300;
 
                 clear_screen(buffer);
-
-                draw_rect(arr_rect[0].p1,arr_rect[0].p2);
+                translate_r(arr_rect[0],100,200);
                 // read_file_crc("crc.txt");
                 // read_file_pol_three("pol_three.txt");
                 // read_file_pol_four("pol_four.txt");
