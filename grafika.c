@@ -328,71 +328,75 @@ void clear_screen(){
     pixel_count = 0;
 }
 
-void translate_r(rect re, int dx, int dy){
+void translate_r(rect *re, int dx, int dy){
     
-    Point init_p1 = re.p1;
-    Point init_p2 = re.p2;
+    Point init_p1 = re->p1;
+    Point init_p2 = re->p2;
     float addY = (float)dy / (float)dx;
 
     for(int i = 0; i < dx/4; i++)
     {
         clear_screen();
-        re.p1.x += 4;
-        re.p1.y += addY*4;
-        re.p2.x += 4;
-        re.p2.y += addY*4;
-        draw_rect(re);
+        re->p1.x += 4;
+        re->p1.y += addY*4;
+        re->p2.x += 4;
+        re->p2.y += addY*4;
+        draw_rect(*re);
     }
-    re.p1.x = init_p1.x+dx;
-    re.p2.x = init_p2.x+dx;
-    re.p1.y = init_p1.y+dy;
-    re.p2.y = init_p2.y+dy;
-    draw_rect(re);
+    re->p1.x = init_p1.x+dx;
+    re->p2.x = init_p2.x+dx;
+    re->p1.y = init_p1.y+dy;
+    re->p2.y = init_p2.y+dy;
+    draw_rect(*re);
 
 }
 
-void dilate_r(rect re, float multiplier){
-    int p = re.p2.x - re.p1.x;
-    int l = re.p2.y - re.p1.y;
-    int control = p/l;
-    // for(int i = 0; i < ; i++)
-    // {
-    //     /* code */
-    // }
+void dilate_r(rect *re, float multiplier){
+    int p = re->p2.x - re->p1.x;
+    int l = re->p2.y - re->p1.y;
+    float control = (float)l/(float)p;
+
+    for(int i = 0;i < p/4;p++){
+        clear_screen();
+        re->p2.x += 4;
+        re->p2.y += control*4;
+        draw_rect(*re);
+    }
+    
     
 }
 
-void translate_circle(circle crc, int dx, int dy) {
+void translate_circle(circle *crc, int dx, int dy) {
     
-    int init_x = crc.p.x;
-    int init_y = crc.p.y;
+    int init_x = crc->p.x;
+    int init_y = crc->p.y;
     float addY = (float)dy / (float)dx;
     for (int i = 0; i < dx/4; i++) {
         clear_screen();
-        crc.p.x += 4;
-        crc.p.y += addY*4;
-        draw_circle(crc.p, crc.r);
+        crc->p.x += 4;
+        crc->p.y += addY*4;
+        draw_circle(crc->p, crc->r);
     }
     clear_screen();
-    crc.p.x = init_x + dx;
-    crc.p.y = init_y + dy;
-    draw_circle(crc.p, crc.r);
+    crc->p.x = init_x + dx;
+    crc->p.y = init_y + dy;
+    draw_circle(crc->p, crc->r);
 }
 
-void dilate_circle(circle crc, float multiplier) {
-    int rad = (int) (crc.r * multiplier);
+void dilate_circle(circle *crc, float multiplier) {
+    int rad = (int) (crc->r * multiplier);
     
-    if (crc.r <= rad ) {
-        for (int i = crc.r; i<=rad; i++) {
+    if (crc->r <= rad ) {
+        for (int i = crc->r; i<=rad; i++) {
             clear_screen();
-            crc.r = i;
-            draw_circle(crc.p,crc.r);
+            crc->r = i;
+            draw_circle(crc->p,crc->r);
         }
     } else {
-        for (int i = crc.r; i >= rad; i--) {
+        for (int i = crc->r; i >= rad; i--) {
             clear_screen();
-            crc.r = i;
-            draw_circle(crc.p, crc.r);
+            crc->r = i;
+            draw_circle(crc->p, crc->r);
         }
     }
 }
@@ -450,7 +454,9 @@ int main()
                 // arr_rect[0].p2.x = arr_rect[0].p2.x+300;
                 // arr_rect[0].p1.x = arr_rect[0].p1.x+300;
 
-                translate_r(arr_rect[0],200,100);
+                translate_r(&arr_rect[0],200,100);
+                scanf("%c",&a);
+                translate_r(&arr_rect[0],200,100);
                 // dilate_r(arr_rect[0],2);
                 // translate_circle(circle_arr[0],200,100);
                 // dilate_circle(circle_arr[0], 0.5);
