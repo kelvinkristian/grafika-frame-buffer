@@ -18,6 +18,9 @@ struct fb_fix_screeninfo fixed_info;
 char *buffer = NULL;
 long pixels[10000];
 int pixel_count = 0;
+polygon_array polygon_arr;
+circle_array circle_arr;
+rect_array rect_arr;
 
 void write_black_pixel(char *buffer, long offset)
 {
@@ -155,12 +158,12 @@ void draw_all_quadrant( Point center, int x, int y)
 }
 
 // pake ini buat gambar lingkaran
-void draw_circle( Point center, int r)
+void draw_circle(circle c)
 {
     int x = 0;
-    int y = r;
-    int d = 3 - 2 * r;
-    draw_all_quadrant(center, x, y);
+    int y = c.r;
+    int d = 3 - 2 * c.r;
+    draw_all_quadrant(c.p, x, y);
     while (x <= y)
     {
         x++;
@@ -173,7 +176,7 @@ void draw_circle( Point center, int r)
             d = d + 4 * (x - y) + 10;
             y--;
         }
-        draw_all_quadrant(center, x, y);
+        draw_all_quadrant(c.p, x, y);
     }
 }
 
@@ -199,45 +202,45 @@ void draw_rect(rect r) {
     print_line(p4, r.p2);
 }
 
-rect* read_file_sqr(char* filename) {
+void read_file_sqr(char* filename) {
 	FILE *file = fopen(filename, "r");
-    rect* Re = malloc(sizeof(rect)*10);
-    int i = 0;
+  rect_arr.rects = malloc(sizeof(rect)*20);
+  int i = 0;
 
-	while(fscanf(file, "%d,%d %d,%d", &Re[i].p1.x,&Re[i].p1.y,&Re[i].p2.x,&Re[i].p2.y) != EOF){
+	while(fscanf(file, "%d,%d %d,%d", &rect_arr.rects[i].p1.x, &rect_arr.rects[i].p1.y, &rect_arr.rects[i].p2.x, &rect_arr.rects[i].p2.y) != EOF){
         i++;
 	}
 	fclose(file);
-    return Re;
+  rect_arr.N = i;
 }
 
-polygon* read_file_polygon(char* filename) {
+void read_file_polygon(char* filename) {
   FILE *file = fopen(filename, "r");
-  polygon* Pol = malloc(sizeof(polygon)*20);
+  polygon_arr.polygons = malloc(sizeof(polygon)*20);
   int i=0;
   int ip;
 
-  while(fscanf(file, "%d", &Pol[i].N) != EOF){
-    Pol[i].points = malloc(sizeof(Point)*Pol[i].N);
-    for (ip=0; ip<Pol[i].N; ip++) {
-      fscanf(file, "%d,%d", &Pol[i].points[ip].x, &Pol[i].points[ip].y);
+  while(fscanf(file, "%d", &polygon_arr.polygons[i].N) != EOF){
+    polygon_arr.polygons[i].points = malloc(sizeof(Point)*polygon_arr.polygons[i].N);
+    for (ip=0; ip<polygon_arr.polygons[i].N; ip++) {
+      fscanf(file, "%d,%d", &polygon_arr.polygons[i].points[ip].x, &polygon_arr.polygons[i].points[ip].y);
     }
     i++;
   }
   fclose(file);
-  return Pol;
+  polygon_arr.N = i;
 }
 
-circle* read_file_crc(char* filename) {
+void read_file_crc(char* filename) {
 	FILE *file = fopen(filename, "r");
-    circle* circles = malloc(sizeof(circle)*10);
+  circle_arr.circles = malloc(sizeof(circle)*20);
 
     int i = 0;
-	while(fscanf(file, "%d,%d %d", &circles[i].p.x, &circles[i].p.y, &circles[i].r) != EOF){
+	while(fscanf(file, "%d,%d %d", &circle_arr.circles[i].p.x, &circle_arr.circles[i].p.y, &circle_arr.circles[i].r) != EOF){
         i++;
 	}
 	fclose(file);
-    return circles;
+  circle_arr.N = i;
 }
 
 void clear_screen(){
@@ -271,12 +274,12 @@ void translate_circle(circle crc, int dx, int dy) {
         clear_screen();
         crc.p.x += 1;
         crc.p.y += addY;
-        draw_circle(crc.p, crc.r);
+        draw_circle(crc);
     }
     clear_screen();
     crc.p.x = init_x + dx;
     crc.p.y = init_y + dy;
-    draw_circle(crc.p, crc.r);
+    draw_circle(crc);
 }
 
 void dilate_circle(circle crc, float multiplier) {
@@ -286,15 +289,29 @@ void dilate_circle(circle crc, float multiplier) {
         for (int i = crc.r; i<=rad; i++) {
             clear_screen();
             crc.r = i;
-            draw_circle(crc.p,crc.r);
+            draw_circle(crc);
         }
     } else {
         for (int i = crc.r; i >= rad; i--) {
             clear_screen();
             crc.r = i;
-            draw_circle(crc.p, crc.r);
+            draw_circle(crc);
         }
     }
+}
+
+void draw_all() {
+  for (int i=0; i<rect_arr.N; i++) {
+    draw_rect(rect_arr.rects[i]);
+  }
+
+  for (int i=0; i<circle_arr.N; i++) {
+    draw_circle(circle_arr.circles[i]);
+  }
+
+  for (int i=0; i<polygon_arr.N; i++) {
+    draw_polygon(polygon_arr.polygons[i]);
+  }
 }
 
 int main()
@@ -321,12 +338,11 @@ int main()
             {
                 clear_screen();
 
-                polygon* polygon_arr = malloc(sizeof(polygon)*10);
-                polygon_arr = read_file_polygon("polygon.txt");
+                read_file_polygon("polygon.txt");
+                read_file_crc("crc.txt");
+                read_file_sqr("sqr.txt");
 
-                for (int x=0; x<2; x++) {
-                  draw_polygon(polygon_arr[x]);
-                }
+                draw_all();
             }
         }
     }
