@@ -19,7 +19,7 @@ typedef struct Rectangle
 
 typedef struct Circle
 {
-    Point c;
+    Point p;
     int r;
 }circle;
 
