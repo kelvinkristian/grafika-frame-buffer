@@ -211,15 +211,16 @@ rect* read_file_sqr(char* filename) {
     return Re;
 }
 
-void read_file_crc(char* filename) {
+circle* read_file_crc(char* filename) {
 	FILE *file = fopen(filename, "r");
-	 Point p;
-	int radius;
-
-	while(fscanf(file, "%d,%d %d", &p.x,&p.y,&radius) != EOF){
-        draw_circle(p, radius);
+    circle* circles = malloc(sizeof(circle)*10);
+    
+    int i = 0;
+	while(fscanf(file, "%d,%d %d", &circles[i].p.x, &circles[i].p.y, &circles[i].r) != EOF){
+        i++;
 	}
 	fclose(file);
+    return circles;
 }
 
 void read_file_pol_three(char* filename) {
@@ -338,6 +339,23 @@ void translate_r(rect re, int dx, int dy){
         draw_rect(re);
     }
 
+}
+
+void translate_circle(circle crc, int dx, int dy) {
+    
+    int init_x = crc.p.x;
+    int init_y = crc.p.y;
+    int addY = dx / dy;
+    for (int i = 0; i < dx; i++) {
+        clear_screen();
+        crc.p.x += 1;
+        crc.p.y += addY;
+        draw_circle(crc.p, crc.r);
+    }
+    clear_screen();
+    crc.p.x = init_x + dx;
+    crc.p.y = init_y + dy;
+    draw_circle(crc.p, crc.r);
 }
 
 int main()
