@@ -330,27 +330,47 @@ void clear_screen(){
 
 void translate_r(rect re, int dx, int dy){
     
-    int c = dx / dy;
+    Point init_p1 = re.p1;
+    Point init_p2 = re.p2;
+    float addY = (float)dy / (float)dx;
 
-    for(int i = 1; i <= dx; i++)
+    for(int i = 0; i < dx/4; i++)
     {
-        // clear_screen();
-        re.p1.x += 1;
-        re.p2.x += 1;
+        clear_screen();
+        re.p1.x += 4;
+        re.p1.y += addY*4;
+        re.p2.x += 4;
+        re.p2.y += addY*4;
         draw_rect(re);
     }
+    re.p1.x = init_p1.x+dx;
+    re.p2.x = init_p2.x+dx;
+    re.p1.y = init_p1.y+dy;
+    re.p2.y = init_p2.y+dy;
+    draw_rect(re);
 
+}
+
+void dilate_r(rect re, float multiplier){
+    int p = re.p2.x - re.p1.x;
+    int l = re.p2.y - re.p1.y;
+    int control = p/l;
+    // for(int i = 0; i < ; i++)
+    // {
+    //     /* code */
+    // }
+    
 }
 
 void translate_circle(circle crc, int dx, int dy) {
     
     int init_x = crc.p.x;
     int init_y = crc.p.y;
-    int addY = dy / dx;
-    for (int i = 0; i < dx; i++) {
+    float addY = (float)dy / (float)dx;
+    for (int i = 0; i < dx/4; i++) {
         clear_screen();
-        crc.p.x += 1;
-        crc.p.y += addY;
+        crc.p.x += 4;
+        crc.p.y += addY*4;
         draw_circle(crc.p, crc.r);
     }
     clear_screen();
@@ -419,9 +439,9 @@ int main()
                 // p2.x = 200;
                 // p2.y = 300;
                 // draw_rect(p, p2);
-                // rect* arr_rect = malloc(sizeof(rect)*50);
-                // arr_rect = read_file_sqr("sqr.txt");
-                // draw_rect(arr_rect[0]);
+                rect* arr_rect = malloc(sizeof(rect)*50);
+                arr_rect = read_file_sqr("sqr.txt");
+                draw_rect(arr_rect[0]);
 
                 circle* circle_arr = malloc(sizeof(circle)*10);
                 circle_arr = read_file_crc("crc.txt");
@@ -430,8 +450,10 @@ int main()
                 // arr_rect[0].p2.x = arr_rect[0].p2.x+300;
                 // arr_rect[0].p1.x = arr_rect[0].p1.x+300;
 
-                // translate_r(arr_rect[0],100,200);
-                translate_circle(circle_arr[0],100,200);
+                translate_r(arr_rect[0],200,100);
+                // dilate_r(arr_rect[0],2);
+                // translate_circle(circle_arr[0],200,100);
+                // dilate_circle(circle_arr[0], 0.5);
                 // read_file_crc("crc.txt");
                 // read_file_pol_three("pol_three.txt");
                 // read_file_pol_four("pol_four.txt");
