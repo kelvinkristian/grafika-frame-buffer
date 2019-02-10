@@ -201,7 +201,7 @@ void draw_rect(rect r) {
 
 rect* read_file_sqr(char* filename) {
 	FILE *file = fopen(filename, "r");
-    rect* Re = malloc(sizeof(rect)*20);
+    rect* Re = malloc(sizeof(rect)*10);
     int i = 0;
 
 	while(fscanf(file, "%d,%d %d,%d", &Re[i].p1.x,&Re[i].p1.y,&Re[i].p2.x,&Re[i].p2.y) != EOF){
@@ -345,7 +345,7 @@ void translate_circle(circle crc, int dx, int dy) {
     
     int init_x = crc.p.x;
     int init_y = crc.p.y;
-    int addY = dx / dy;
+    float addY = dy / dx;
     for (int i = 0; i < dx; i++) {
         clear_screen();
         crc.p.x += 1;
@@ -355,7 +355,7 @@ void translate_circle(circle crc, int dx, int dy) {
     clear_screen();
     crc.p.x = init_x + dx;
     crc.p.y = init_y + dy;
-    draw_circle(crc.p, crc.r);
+    // draw_circle(crc.p, crc.r);
 }
 
 int main()
@@ -400,16 +400,19 @@ int main()
                 // p2.x = 200;
                 // p2.y = 300;
                 // draw_rect(p, p2);
-                rect* arr_rect = malloc(sizeof(rect)*50);
-                arr_rect = read_file_sqr("sqr.txt");
-                draw_rect(arr_rect[0]);
+                // rect* arr_rect = malloc(sizeof(rect)*50);
+                // arr_rect = read_file_sqr("sqr.txt");
+                // draw_rect(arr_rect[0]);
+
+                circle* circle_arr = malloc(sizeof(circle)*10);
+                circle_arr = read_file_crc("crc.txt");
                 scanf("%c",&a);
 
                 // arr_rect[0].p2.x = arr_rect[0].p2.x+300;
                 // arr_rect[0].p1.x = arr_rect[0].p1.x+300;
 
-                clear_screen(buffer);
-                translate_r(arr_rect[0],100,200);
+                // translate_r(arr_rect[0],100,200);
+                translate_circle(circle_arr[0],100,200);
                 // read_file_crc("crc.txt");
                 // read_file_pol_three("pol_three.txt");
                 // read_file_pol_four("pol_four.txt");
