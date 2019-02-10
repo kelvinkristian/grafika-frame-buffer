@@ -13,8 +13,8 @@
 // Using macros to convert degree to radian
 // and call sin() and cos() as these functions
 // take input in radians
-#define SIN(x) sin(x * 3.141592653589/180)
-#define COS(x) cos(x * 3.141592653589/180)
+#define SIN(x) sin(x * M_PI/180)
+#define COS(x) cos(x * M_PI/180)
 
 struct fb_var_screeninfo screen_info;
 struct fb_fix_screeninfo fixed_info;
@@ -340,59 +340,59 @@ void draw_all() {
   usleep(30000);
 }
 
-void translate_polygon(polygon p, int dx, int dy) {
-    polygon temp = p;
-    int addY = dy/dx;
-    for (int i = 0; i < dx; i++) {
-        clear_screen();
-        for (int j=0; j <=p.N; j++) {
-            p.points[i].x++;
-            p.points[i].y += addY;
+void translate_polygon(polygon *p, int dx, int dy) {
+    Point* temp = malloc(sizeof(Point)*6);
+    for (int i = 0; i < 4; i++) {
+        temp[i] = p->points[i];
+    }
+    if(dx<0){
+      float addY = dy;
+      for (int j=0; j <= p->N; j++) {
+          p->points[j].x++;
+          p->points[j].y += addY;
+          draw_all();
+      }
+    }else{
+      float addY = (float)dy/(float)dx;
+      for (int i = 0; i < dx; i++) {
+        for (int j=0; j <= p->N; j++) {
+            p->points[j].x++;
+            p->points[j].y += addY;
         }
-        draw_polygon(p);
+        draw_all();
+      }
     }
-    clear_screen();
-    //for (int j=0; j <=p.N; j++) {
-      //  p.points[i].x = temp.points[i].x + dx;
-        //p.points[i].y = temp.points[i].y + dy;
-    //}
-    //draw_polygon(p);
+
+
+    for (int j=0; j <=p->N; j++) {
+        p->points[j].x = temp[j].x + dx;
+        p->points[j].y = temp[j].y + dy;
+    }
+    draw_all();
 }
 
-void rotate(float a[][2], int n, int x_pivot,
-                      int y_pivot, int angle)
-{
+void rotate_point_polygon(polygon *polygon, Point pivot, int angle) {
     int i = 0;
-    while (i < n)
-    {
-        // Shifting the pivot point to the origin
-        // and the given points accordingly
-        int x_shifted = a[i][0] - x_pivot;
-        int y_shifted = a[i][1] - y_pivot;
-
-        // Calculating the rotated point co-ordinates
-        // and shifting it back
-        a[i][0] = x_pivot + (x_shifted*COS(angle)
-                          - y_shifted*SIN(angle));
-        a[i][1] = y_pivot + (x_shifted*SIN(angle)
-                          + y_shifted*COS(angle));
-        printf("(%f, %f) ", a[i][0], a[i][1]);
-        i++;
-    }
+	while (i < polygon->N) {
+		int x_shifted = polygon->points[i].x - pivot.x;
+		int y_shifted = polygon->points[i].y - pivot.y;
+		polygon->points[i].x = pivot.x + (x_shifted*COS(angle) - y_shifted*SIN(angle));
+		polygon->points[i].y = pivot.y + (x_shifted*SIN(angle) + y_shifted*COS(angle));
+		i++;
+	}
+  draw_all();
 }
 
-void rotate_polygon(struct Polygon polygon, Point pivot, int angle) {
-    int i = 0;
-    while (i < polygon.N) {
-      int x_shifted = polygon.points[i].x - pivot.x;
-      int y_shifted = polygon.points[i].y - pivot.y;
-      polygon.points[i].x = pivot.x + (x_shifted*COS(angle) - y_shifted*SIN(angle));
-      polygon.points[i].y = pivot.y + (x_shifted*SIN(angle) + y_shifted*COS(angle));
-      //	clear_screen();
-    //	draw_polygon(polygon);
-      i++;
+void rotate_polygon(polygon *polygon, Point pivot, int angle){
+  if(angle<0){
+    for(int i = 0; i <= angle*-1; i++){
+      rotate_point_polygon(polygon, pivot, -1);
     }
-    draw_polygon(polygon);
+  }else{
+    for(int i = 0; i <= angle; i++){
+      rotate_point_polygon(polygon, pivot, 1);
+    }
+  }
 }
 
 int main()
@@ -423,10 +423,27 @@ int main()
                 read_file_crc("crc.txt");
                 read_file_sqr("sqr.txt");
 
-                translate_r(&rect_arr.rects[0], 100,100);
-                dilate_r(&rect_arr.rects[0], 2);
-                translate_circle(&circle_arr.circles[0], 200,200);
-                dilate_circle(&circle_arr.circles[0], 2);
+                // translate_r(&rect_arr.rects[0], 100,100);
+                // dilate_r(&rect_arr.rects[0], 2);
+                // translate_circle(&circle_arr.circles[0], 200,200);
+                // dilate_circle(&circle_arr.circles[0], 2);
+                int ss = 0;
+                draw_all();
+                // translate_polygon(&polygon_arr.polygons[0], 100, 100);
+                // while (1) {
+                //   rotate_polygon(&polygon_arr.polygons[0], (Point) {375,600}, -10);
+                //   rotate_polygon(&polygon_arr.polygons[0], (Point) {375,600}, 10);
+                //   ss++;
+                // }
+                translate_polygon(&polygon_arr.polygons[1],10,100);
+                while (1) {
+                  /* code */
+                  translate_r(&rect_arr.rects[3],20,0);
+                  translate_r(&rect_arr.rects[3],-20,0);
+                  rotate_polygon(&polygon_arr.polygons[4],(Point) {680,384},30);
+                }
+
+
             }
         }
     }
