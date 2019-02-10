@@ -25,7 +25,7 @@ typedef struct Polygon
 
 typedef struct Circle
 {
-    Point c;
+    Point p;
     int r;
 }circle;
 
