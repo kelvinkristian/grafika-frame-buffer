@@ -304,23 +304,27 @@ void dilate_circle(circle crc, float multiplier) {
 }
 
 void translate_polygon(polygon p, int dx, int dy) {
-    polygon temp = p;
+    Point* temp = malloc(sizeof(Point)*6);
+    for (int i = 0; i < 4; i++) {
+        temp[i] = p.points[i];
+    }
     int addY = dy/dx;
     for (int i = 0; i < dx; i++) {
         clear_screen();
         for (int j=0; j <=p.N; j++) {
-            p.points[i].x++;
-            p.points[i].y += addY;
+            p.points[j].x++;
+            p.points[j].y += addY;
         }
         draw_polygon(p);
     }
     clear_screen();
     for (int j=0; j <=p.N; j++) {
-        p.points[j].x = temp.points[j].x + dx;
-        p.points[j].y = temp.points[j].y + dy;
+        p.points[j].x = temp[j].x + dx;
+        p.points[j].y = temp[j].y + dy;
     }
     draw_polygon(p);
 }
+    
     
 void rotate(float a[][2], int n, int x_pivot,  
                       int y_pivot, int angle) 
@@ -386,7 +390,7 @@ int main()
                 for (int x=0; x<2; x++) {
                   draw_polygon(polygon_arr[x]);
                 }
-                translate_polygon(polygon_arr[0],200,100);
+                translate_polygon(polygon_arr[0],10,20);
                 Point point;
                 point.x = 200;
                 point.y = 200;
