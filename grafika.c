@@ -10,9 +10,14 @@
 #include <stdlib.h>
 #include "grafika.h"
 
+// Using macros to convert degree to radian
+// and call sin() and cos() as these functions
+// take input in radians
+#define SIN(x) sin(x * 3.141592653589/180)
+#define COS(x) cos(x * 3.141592653589/180)
+
 struct fb_var_screeninfo screen_info;
 struct fb_fix_screeninfo fixed_info;
-
 
 
 char *buffer = NULL;
@@ -21,6 +26,8 @@ int pixel_count = 0;
 polygon_array polygon_arr;
 circle_array circle_arr;
 rect_array rect_arr;
+
+void draw_all();
 
 void write_black_pixel(char *buffer, long offset)
 {
@@ -244,63 +251,85 @@ void read_file_crc(char* filename) {
 }
 
 void clear_screen(){
-    for (long i = 0; i < 4147480; i++)
-    {
-        write_black_pixel(buffer, i);
-    }
+    // for (long i = 0; i < 4147480; i+=4)
+    // {
+    //     write_black_pixel(buffer, i);
+    // }
+    memset(buffer, 0x00, 4147480);
     pixel_count = 0;
 }
 
-void translate_r(rect re, int dx, int dy){
+void translate_r(rect *re, int dx, int dy){
 
-    int c = dx / dy;
+    Point init_p1 = re->p1;
+    Point init_p2 = re->p2;
+    float addY = (float)dy / (float)dx;
 
-    for(int i = 1; i <= dx; i++)
+    for(int i = 0; i < dx/4; i++)
     {
-        // clear_screen();
-        re.p1.x += 1;
-        re.p2.x += 1;
-        draw_rect(re);
+        re->p1.x += 4;
+        re->p1.y += addY*4;
+        re->p2.x += 4;
+        re->p2.y += addY*4;
+        draw_all();
     }
-
+    re->p1.x = init_p1.x+dx;
+    re->p2.x = init_p2.x+dx;
+    re->p1.y = init_p1.y+dy;
+    re->p2.y = init_p2.y+dy;
+    draw_all();
 }
 
-void translate_circle(circle crc, int dx, int dy) {
+void dilate_r(rect *re, float multiplier){
+    int p = re->p2.x - re->p1.x;
+    int l = re->p2.y - re->p1.y;
+    float control = (float)l/(float)p;
 
-    int init_x = crc.p.x;
-    int init_y = crc.p.y;
-    int addY = dy / dx;
-    for (int i = 0; i < dx; i++) {
-        clear_screen();
-        crc.p.x += 1;
-        crc.p.y += addY;
-        draw_circle(crc);
+    for(int i = 0;i < p/4;i++){
+        re->p2.x += 4;
+        re->p2.y += control*4;
+        draw_all();
     }
-    clear_screen();
-    crc.p.x = init_x + dx;
-    crc.p.y = init_y + dy;
-    draw_circle(crc);
 }
 
-void dilate_circle(circle crc, float multiplier) {
-    int rad = (int) (crc.r * multiplier);
+void translate_circle(circle *crc, int dx, int dy) {
 
-    if (crc.r <= rad ) {
-        for (int i = crc.r; i<=rad; i++) {
-            clear_screen();
-            crc.r = i;
-            draw_circle(crc);
+    int init_x = crc->p.x;
+    int init_y = crc->p.y;
+    float addY = (float)dy / (float)dx;
+    for (int i = 0; i < dx/4; i++) {
+        crc->p.x += 4;
+        crc->p.y += addY*4;
+        draw_all();
+    }
+    crc->p.x = init_x + dx;
+    crc->p.y = init_y + dy;
+    draw_all();
+}
+
+void dilate_circle(circle *crc, float multiplier) {
+    int rad = (int) (crc->r * multiplier);
+
+    if (crc->r <= rad ) {
+        for (int i = crc->r; i<=rad; i++) {
+            crc->r = i;
+            draw_all();
         }
     } else {
-        for (int i = crc.r; i >= rad; i--) {
-            clear_screen();
-            crc.r = i;
-            draw_circle(crc);
+        for (int i = crc->r; i >= rad; i--) {
+            crc->r = i;
+            draw_all();
         }
     }
 }
 
 void draw_all() {
+  clear_screen();
+  // sleep(1);
+  for (int i=0; i<polygon_arr.N; i++) {
+    draw_polygon(polygon_arr.polygons[i]);
+  }
+
   for (int i=0; i<rect_arr.N; i++) {
     draw_rect(rect_arr.rects[i]);
   }
@@ -308,10 +337,62 @@ void draw_all() {
   for (int i=0; i<circle_arr.N; i++) {
     draw_circle(circle_arr.circles[i]);
   }
+  usleep(30000);
+}
 
-  for (int i=0; i<polygon_arr.N; i++) {
-    draw_polygon(polygon_arr.polygons[i]);
-  }
+void translate_polygon(polygon p, int dx, int dy) {
+    polygon temp = p;
+    int addY = dy/dx;
+    for (int i = 0; i < dx; i++) {
+        clear_screen();
+        for (int j=0; j <=p.N; j++) {
+            p.points[i].x++;
+            p.points[i].y += addY;
+        }
+        draw_polygon(p);
+    }
+    clear_screen();
+    //for (int j=0; j <=p.N; j++) {
+      //  p.points[i].x = temp.points[i].x + dx;
+        //p.points[i].y = temp.points[i].y + dy;
+    //}
+    //draw_polygon(p);
+}
+
+void rotate(float a[][2], int n, int x_pivot,
+                      int y_pivot, int angle)
+{
+    int i = 0;
+    while (i < n)
+    {
+        // Shifting the pivot point to the origin
+        // and the given points accordingly
+        int x_shifted = a[i][0] - x_pivot;
+        int y_shifted = a[i][1] - y_pivot;
+
+        // Calculating the rotated point co-ordinates
+        // and shifting it back
+        a[i][0] = x_pivot + (x_shifted*COS(angle)
+                          - y_shifted*SIN(angle));
+        a[i][1] = y_pivot + (x_shifted*SIN(angle)
+                          + y_shifted*COS(angle));
+        printf("(%f, %f) ", a[i][0], a[i][1]);
+        i++;
+    }
+}
+
+void rotate_polygon(struct Polygon polygon, Point pivot, int angle) {
+    int i = 0;
+    while (i < polygon.N) {
+      int x_shifted = polygon.points[i].x - pivot.x;
+      int y_shifted = polygon.points[i].y - pivot.y;
+      polygon.points[i].x = pivot.x + (x_shifted*COS(angle) - y_shifted*SIN(angle));
+      polygon.points[i].y = pivot.y + (x_shifted*SIN(angle) + y_shifted*COS(angle));
+      //	clear_screen();
+    //	draw_polygon(polygon);
+      i++;
+    }
+    draw_polygon(polygon);
 }
 
 int main()
@@ -342,7 +423,10 @@ int main()
                 read_file_crc("crc.txt");
                 read_file_sqr("sqr.txt");
 
-                draw_all();
+                translate_r(&rect_arr.rects[0], 100,100);
+                dilate_r(&rect_arr.rects[0], 2);
+                translate_circle(&circle_arr.circles[0], 200,200);
+                dilate_circle(&circle_arr.circles[0], 2);
             }
         }
     }
@@ -350,8 +434,6 @@ int main()
         munmap(buffer, buflen);
     if (fd >= 0)
         close(fd);
-
-    scanf("%c",&a);
 
     return r;
 }
