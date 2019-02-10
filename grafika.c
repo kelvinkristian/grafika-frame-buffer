@@ -325,6 +325,7 @@ void clear_screen(){
     {
         write_black_pixel(buffer, i);
     }
+    pixel_count = 0;
 }
 
 void translate_r(rect re, int dx, int dy){
@@ -355,7 +356,7 @@ void translate_circle(circle crc, int dx, int dy) {
     clear_screen();
     crc.p.x = init_x + dx;
     crc.p.y = init_y + dy;
-    // draw_circle(crc.p, crc.r);
+    draw_circle(crc.p, crc.r);
 }
 
 void dilate_circle(circle crc, float multiplier) {
@@ -368,7 +369,7 @@ void dilate_circle(circle crc, float multiplier) {
             draw_circle(crc.p,crc.r);
         }
     } else {
-        for (int i = crc.r; i=>rad; i--) {
+        for (int i = crc.r; i >= rad; i--) {
             clear_screen();
             crc.r = i;
             draw_circle(crc.p, crc.r);
