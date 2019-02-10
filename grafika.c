@@ -382,17 +382,15 @@ int main()
                 polygon* polygon_arr = malloc(sizeof(polygon)*10);
                 polygon_arr = read_file_polygon("polygon.txt");
 
-<<<<<<< HEAD
                 for (int x=0; x<2; x++) {
                   draw_polygon(polygon_arr[x]);
                 }
                 translate_polygon(polygon_arr[0],200,100);
-=======
                 Point point;
                 point.x = 200;
                 point.y = 200;
                 rotate_polygon(polygon_arr[0], point, 90);
->>>>>>> ab3e30824be7ec9aaa470a5f474f564c19c1caa9
+
             }
         }
     }
