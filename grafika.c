@@ -399,16 +399,23 @@ void rotate(float a[][2], int n, int x_pivot,
 
 void rotate_polygon(struct Polygon polygon, Point pivot, int angle) {
     int i = 0;
-    while (i < polygon.N) {
-        int x_shifted = polygon.points[i].x - pivot.x;
-        int y_shifted = polygon.points[i].y - pivot.y;
-        polygon.points[i].x = pivot.x + (x_shifted*COS(angle) - y_shifted*SIN(angle)); 
-        polygon.points[i].y = pivot.y + (x_shifted*SIN(angle) + y_shifted*COS(angle)); 
-//	clear_screen();
-//	draw_polygon(polygon);	
-	i++;
-    }
-    draw_polygon(polygon);
+    //int j = 0;
+   // float angle = (float)total_angle/100;
+   // printf("%.2f", angle);
+    //for (j = 0; j < 100; j++) {
+	while (i < polygon.N) {
+		int x_shifted = polygon.points[i].x - pivot.x;
+		int y_shifted = polygon.points[i].y - pivot.y;
+		polygon.points[i].x = pivot.x + (x_shifted*COS(angle) - y_shifted*SIN(angle)); 
+		polygon.points[i].y = pivot.y + (x_shifted*SIN(angle) + y_shifted*COS(angle)); 
+		//clear_screen();	
+		i++;
+//		angle += angle;
+	}
+	clear_screen();
+	draw_polygon(polygon);	
+    //}
+    //draw_polygon(polygon);
 }
 
 int main()
@@ -444,9 +451,12 @@ int main()
                 translate_polygon(polygon_arr[0],10,20);
 
                 Point point;
-                point.x = 300;
-                point.y = 400;
-                rotate_polygon(polygon_arr[0], point, 60);
+                point.x = 400;
+                point.y = 100;
+		for (int i = 0; i < 60; i++) {
+			rotate_polygon(polygon_arr[0], point, 1);
+		}
+//		rotate_polygon(polygon_arr[0], point, 60);
 		//draw_polygon(polygon_arr[0]); 
  	    }
         }
