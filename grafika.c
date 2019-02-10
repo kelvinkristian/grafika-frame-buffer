@@ -292,6 +292,33 @@ void dilate_r(rect *re, float multiplier){
     }
 }
 
+void rotate_rect(rect *r, int angle) {
+    Point center;
+    center.x = r->p2.x - r->p1.x;
+    center.y = r->p2.y - r->p1.y;
+    int x1 = r->p1.x;
+    int y1 = r->p1.y;
+    int x2 = r->p2.x;
+    int y2 = r->p2.y;
+
+    for (int a=0; a<=angle; a+=5) {
+        clear_screen();
+        r->p1.x = (x1-center.x) * COS(a) - (y1-center.y) * SIN(a)+center.x;
+        r->p1.y = (x1-center.x) * SIN(a) + (y1-center.y) * COS(a)+center.y;
+        r->p2.x = (x2-center.x) * COS(a) - (y2-center.y) * SIN(a)+center.x;
+        r->p2.y = (x2-center.x) * SIN(a) + (y2-center.y) * COS(a)+center.y;
+        draw_rect(*r);
+    }
+    clear_screen();
+    r->p1.x = (x1-center.x) * COS(angle) - (y1-center.y) * SIN(angle)+center.x;
+    r->p1.y = (x1-center.x) * SIN(angle) + (y1-center.y) * COS(angle)+center.y;
+    r->p2.x = (x2-center.x) * COS(angle) - (y2-center.y) * SIN(angle)+center.x;
+    r->p2.y = (x2-center.x) * SIN(angle) + (y2-center.y) * COS(angle)+center.y;
+    draw_rect(*r);
+
+
+}
+
 void translate_circle(circle *crc, int dx, int dy) {
 
     int init_x = crc->p.x;
@@ -442,8 +469,6 @@ int main()
                   translate_r(&rect_arr.rects[3],-20,0);
                   rotate_polygon(&polygon_arr.polygons[4],(Point) {680,384},30);
                 }
-
-
             }
         }
     }
